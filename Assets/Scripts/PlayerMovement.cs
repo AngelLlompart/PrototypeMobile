@@ -90,21 +90,33 @@ public class PlayerMovement : MonoBehaviour
                 if (theTouch.position.x >= btnLeftPosition.x - btnMovementsSize && theTouch.position.x <= btnLeftPosition.x + btnMovementsSize &&
                     theTouch.position.y >= btnLeftPosition.y - btnMovementsSize && theTouch.position.y <= btnLeftPosition.y + btnMovementsSize)
                 {
-                    transform.Rotate(0, -90 * Time.deltaTime, 0);
+                    if (_gameManager.invAxis)
+                    {
+                        transform.Rotate(0,90 * Time.deltaTime,0);
+                    }
+                    else
+                    {
+                        transform.Rotate(0, -90 * Time.deltaTime, 0);
+                    }
                 }
                 else if (theTouch.position.x >= btnRightPosition.x - btnMovementsSize &&
                          theTouch.position.x <= btnRightPosition.x + btnMovementsSize &&
                          theTouch.position.y >= btnRightPosition.y - btnMovementsSize &&
                          theTouch.position.y <= btnRightPosition.y + btnMovementsSize)
                 {
-                    Debug.Log("NOP");
-                    transform.Rotate(0, 90 * Time.deltaTime, 0);
+                    if (_gameManager.invAxis)
+                    {
+                        transform.Rotate(0,-90 * Time.deltaTime,0);
+                    }
+                    else
+                    {
+                        transform.Rotate(0, 90 * Time.deltaTime, 0);
+                    }
                 }
 
                 if (theTouch.position.x >= btnResetPosition.x - btnResetWidth && theTouch.position.x <= btnResetPosition.x + btnResetWidth &&
                     theTouch.position.y >= btnResetPosition.y - btnResetHeight && theTouch.position.y <= btnResetPosition.y + btnResetHeight && theTouch.phase == TouchPhase.Ended)
                 {
-                    Debug.Log("yes");
                     CarRestoreRotation();
                 }
                 /*else if (theTouch.phase == TouchPhase.Moved)
