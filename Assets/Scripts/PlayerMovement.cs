@@ -6,7 +6,8 @@ using UnityEngine.UI;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public int moveSpeed = 10;
+    private int moveSpeed = 10;
+    private int turboSpeed = 20;
     [SerializeField] private TextMeshProUGUI turboValue;
     [SerializeField] private Slider turboBar;
     private Rigidbody _playerRb;
@@ -14,9 +15,35 @@ public class PlayerMovement : MonoBehaviour
     private float _ogTurbo = 50;
     private float turbo;
     private Touch theTouch;
+    [SerializeField] private GameObject btnUp;
+    [SerializeField] private GameObject btnDown;
+    [SerializeField] private GameObject btnLeft;
+    [SerializeField] private GameObject btnRight;
+    [SerializeField] private GameObject btnTurbo;
+    private Vector3 btnUpPosition;
+    private Vector3 btnDownPosition;
+    private Vector3 btnLeftPosition;
+    private Vector3 btnRightPosition;
+    private Vector3 btnTurboPosition;
+    private float btnMovementsSize;
+    private float btnTurboSize;
+
+    private Touch touch2;
     // Start is called before the first frame update
     void Start()
     {
+        btnUpPosition = btnUp.transform.position;
+        btnDownPosition = btnDown.transform.position;
+        btnLeftPosition = btnLeft.transform.position;
+        btnRightPosition = btnRight.transform.position;
+        btnTurboPosition = btnTurbo.transform.position;
+        Debug.Log(btnUpPosition);
+        btnMovementsSize = btnUp.GetComponent<RectTransform>().rect.height / 2 * btnUp.transform.lossyScale.y;
+        btnTurboSize = btnTurbo.GetComponent<RectTransform>().rect.height / 2 * btnTurbo.transform.lossyScale.y;
+        Debug.Log(btnUp.transform.lossyScale);
+        Debug.Log(btnDownPosition);
+        Debug.Log(btnLeftPosition);
+        Debug.Log(btnRightPosition);
         _gameManager = FindObjectOfType<GameManager>();
         _playerRb = gameObject.GetComponent<Rigidbody>();
         UpdateTurbo();
@@ -28,26 +55,56 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.touchCount > 0)
         {
-            theTouch = Input.GetTouch(0);
-            if (theTouch.position.x >= 126 && theTouch.position.x <= 326 && theTouch.position.y >= 450 && theTouch.position.y <= 650)
+            for (int i = 0; i < Input.touchCount; i++)
             {
-                transform.Translate(Vector3.forward * Time.deltaTime * moveSpeed);
-            } else if (theTouch.position.x >= 126 && theTouch.position.x <= 326 && theTouch.position.y >= 150 && theTouch.position.y <= 350)
-            {
-                transform.Translate(Vector3.back * Time.deltaTime * moveSpeed);
-            }
-            /*else if (theTouch.phase == TouchPhase.Moved)
-            {
-                Vector3 move = new Vector3();
-                Vector3 rotate = new Vector3();
-                touchEndPosition = theTouch.position;
+                theTouch = Input.GetTouch(i);
+                // touch2 = Input.GetTouch(1);
+                if ((theTouch.position.x >= btnTurboPosition.x - btnTurboSize && theTouch.position.x <= btnTurboPosition.x + btnTurboSize &&
+                    theTouch.position.y >= btnTurboPosition.y - btnTurboSize && theTouch.position.y <= btnTurboPosition.y + btnTurboSize) && turbo > 0)
+                {
+                    turbo -= (10 * Time.deltaTime);
+                    UpdateTurbo();
+                    transform.Translate(Vector3.forward * Time.deltaTime * turboSpeed);
+                }
 
-                move = y > 0 ? Vector3.forward : Vector3.back;
-                rotate = x > 0 ? new Vector3(0, 90, 0) : new Vector3(0, -90, 0);
-            
-                transform.Translate(move * Time.deltaTime * moveSpeed);
-                transform.Rotate(rotate * Time.deltaTime);
-            }*/
+                if (theTouch.position.x >= btnUpPosition.x - btnMovementsSize && theTouch.position.x <= btnUpPosition.x + btnMovementsSize &&
+                    theTouch.position.y >= btnUpPosition.y - btnMovementsSize && theTouch.position.y <= btnUpPosition.y + btnMovementsSize)
+                {
+                    transform.Translate(Vector3.forward * Time.deltaTime * moveSpeed);
+                }
+                else if (theTouch.position.x >= btnDownPosition.x - btnMovementsSize &&
+                         theTouch.position.x <= btnDownPosition.x + btnMovementsSize &&
+                         theTouch.position.y >= btnDownPosition.y - btnMovementsSize &&
+                         theTouch.position.y <= btnDownPosition.y + btnMovementsSize)
+                {
+                    transform.Translate(Vector3.back * Time.deltaTime * moveSpeed);
+                }
+
+                if (theTouch.position.x >= btnLeftPosition.x - btnMovementsSize && theTouch.position.x <= btnLeftPosition.x + btnMovementsSize &&
+                    theTouch.position.y >= btnLeftPosition.y - btnMovementsSize && theTouch.position.y <= btnLeftPosition.y + btnMovementsSize)
+                {
+                    transform.Rotate(0, -90 * Time.deltaTime, 0);
+                }
+                else if (theTouch.position.x >= btnRightPosition.x - btnMovementsSize &&
+                         theTouch.position.x <= btnRightPosition.x + btnMovementsSize &&
+                         theTouch.position.y >= btnRightPosition.y - btnMovementsSize &&
+                         theTouch.position.y <= btnRightPosition.y + btnMovementsSize)
+                {
+                    transform.Rotate(0, 90 * Time.deltaTime, 0);
+                }
+                /*else if (theTouch.phase == TouchPhase.Moved)
+                {
+                    Vector3 move = new Vector3();
+                    Vector3 rotate = new Vector3();
+                    touchEndPosition = theTouch.position;
+    
+                    move = y > 0 ? Vector3.forward : Vector3.back;
+                    rotate = x > 0 ? new Vector3(0, 90, 0) : new Vector3(0, -90, 0);
+                
+                    transform.Translate(move * Time.deltaTime * moveSpeed);
+                    transform.Rotate(rotate * Time.deltaTime);
+                }*/
+            }
         }
 
         CarMovement();
