@@ -20,13 +20,17 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private GameObject btnLeft;
     [SerializeField] private GameObject btnRight;
     [SerializeField] private GameObject btnTurbo;
+    [SerializeField] private GameObject btnReset;
     private Vector3 btnUpPosition;
     private Vector3 btnDownPosition;
     private Vector3 btnLeftPosition;
     private Vector3 btnRightPosition;
     private Vector3 btnTurboPosition;
+    private Vector3 btnResetPosition;
     private float btnMovementsSize;
     private float btnTurboSize;
+    private float btnResetHeight;
+    private float btnResetWidth;
 
     private Touch touch2;
     // Start is called before the first frame update
@@ -37,7 +41,10 @@ public class PlayerMovement : MonoBehaviour
         btnLeftPosition = btnLeft.transform.position;
         btnRightPosition = btnRight.transform.position;
         btnTurboPosition = btnTurbo.transform.position;
+        btnResetPosition = btnReset.transform.position;
         Debug.Log(btnUpPosition);
+        btnResetHeight = btnReset.GetComponent<RectTransform>().rect.height / 2 * btnReset.transform.lossyScale.y;
+        btnResetWidth = btnReset.GetComponent<RectTransform>().rect.width / 2 * btnReset.transform.lossyScale.x;
         btnMovementsSize = btnUp.GetComponent<RectTransform>().rect.height / 2 * btnUp.transform.lossyScale.y;
         btnTurboSize = btnTurbo.GetComponent<RectTransform>().rect.height / 2 * btnTurbo.transform.lossyScale.y;
         Debug.Log(btnUp.transform.lossyScale);
@@ -90,7 +97,15 @@ public class PlayerMovement : MonoBehaviour
                          theTouch.position.y >= btnRightPosition.y - btnMovementsSize &&
                          theTouch.position.y <= btnRightPosition.y + btnMovementsSize)
                 {
+                    Debug.Log("NOP");
                     transform.Rotate(0, 90 * Time.deltaTime, 0);
+                }
+
+                if (theTouch.position.x >= btnResetPosition.x - btnResetWidth && theTouch.position.x <= btnResetPosition.x + btnResetWidth &&
+                    theTouch.position.y >= btnResetPosition.y - btnResetHeight && theTouch.position.y <= btnResetPosition.y + btnResetHeight && theTouch.phase == TouchPhase.Ended)
+                {
+                    Debug.Log("yes");
+                    CarRestoreRotation();
                 }
                 /*else if (theTouch.phase == TouchPhase.Moved)
                 {
@@ -109,7 +124,12 @@ public class PlayerMovement : MonoBehaviour
 
         CarMovement();
         CarRotation();
-        CarRestoreRotation();
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            CarRestoreRotation();
+        }
+
         Turbo();
 
         if (transform.position.y < -1)
@@ -202,13 +222,9 @@ public class PlayerMovement : MonoBehaviour
     
     private void CarRestoreRotation()
     {
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            _playerRb.velocity = Vector3.zero;
-            _playerRb.angularVelocity = Vector3.zero; 
-            Vector3 eulers = transform.eulerAngles;
-            transform.rotation = Quaternion.Euler(0, eulers.y, 0);
-            
-        }
+        _playerRb.velocity = Vector3.zero;
+        _playerRb.angularVelocity = Vector3.zero; 
+        Vector3 eulers = transform.eulerAngles;
+        transform.rotation = Quaternion.Euler(0, eulers.y, 0);
     }
 }
